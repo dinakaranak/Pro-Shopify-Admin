@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FiSave, FiArrowLeft } from 'react-icons/fi';
+import Api from '../../Services/Api';
 
 const Product = () => {
   const { id } = useParams();
@@ -34,7 +34,7 @@ const Product = () => {
     if (id) {
       const fetchProduct = async () => {
         try {
-          const { data } = await axios.get(`http://localhost:5000/api/products/${id}`);
+          const { data } = await Api.get(`/products/${id}`);
           setProduct({
             name: data.name,
             description: data.description,
@@ -90,11 +90,11 @@ const Product = () => {
     try {
       if (id) {
         // Update existing product
-        await axios.put(`http://localhost:5000/api/products/${id}`, product);
+        await Api.put(`/products/${id}`, product);
         toast.success('Product updated successfully!');
       } else {
         // Create new product
-        await axios.post('http://localhost:5000/api/products', product);
+        await Api.post('/products', product);
         toast.success('Product added successfully!');
       }
       setTimeout(() => navigate('/products'), 1500);
@@ -227,6 +227,7 @@ const Product = () => {
                   <button 
                     type="submit" 
                     className="btn btn-primary"
+                     onClick={() => navigate('/productList')}
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (

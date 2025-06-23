@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FiEdit2, FiTrash2, FiPlus, FiSearch } from 'react-icons/fi';
+import Api from '../../Services/Api';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -16,7 +16,7 @@ const ProductList = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data } = await axios.get('http://localhost:5000/api/products');
+        const { data } = await Api.get('/products');
         setProducts(data);
         setFilteredProducts(data);
         setLoading(false);
@@ -50,7 +50,7 @@ const ProductList = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/products/${id}`);
+        await Api.delete(`/products/${id}`);
         setProducts(products.filter(product => product._id !== id));
         toast.success('Product deleted successfully');
       } catch (error) {

@@ -12,6 +12,7 @@ import Users from './pages/User';
 import Products from './pages/Product/Products';
 import ProductList from './pages/Product/ProductList';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Banner from './components/Banner';
 
 function App() {
   const [themeMode, setThemeMode] = useState('light');
@@ -53,6 +54,7 @@ function App() {
                 <Route path="/productList" element={<ProductList />} />
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/banner" element={<Banner />} />
               </Routes>
             </div>
           </div>

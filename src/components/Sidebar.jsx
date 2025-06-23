@@ -48,6 +48,12 @@ const Sidebar = ({ open, toggleSidebar }) => {
           </ListItemIcon>
           <ListItemText primary="Users" />
         </ListItem>
+        <ListItem button component={Link} to="/banner">
+          <ListItemIcon>
+            <PeopleIcon />
+          </ListItemIcon>
+          <ListItemText primary="Banner" />
+        </ListItem>
         <ListItem button component={Link} to="/products">
           <ListItemIcon>
             <InventoryIcon />
