@@ -13,6 +13,7 @@ import Products from './pages/Product/Products';
 import ProductList from './pages/Product/ProductList';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Banner from './components/Banner';
+import SubBanner from './components/SubBanner';
 
 function App() {
   const [themeMode, setThemeMode] = useState('light');
@@ -42,10 +43,11 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
+        <Topbar toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
         <div style={{ display: 'flex' }}>
           <Sidebar open={sidebarOpen} toggleSidebar={toggleSidebar} />
           <div style={{ flexGrow: 1 }}>
-            <Topbar toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
+            {/* <Topbar toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} /> */}
             <div style={{ padding: '20px' }}>
               <Routes>
                 <Route path="/" element={<Dashboard />} />
@@ -55,6 +57,7 @@ function App() {
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/banner" element={<Banner />} />
+                <Route path="/SubBanner" element={<SubBanner />} />
               </Routes>
             </div>
           </div>

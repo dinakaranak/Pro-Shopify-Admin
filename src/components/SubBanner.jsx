@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Api from '../Services/Api';
 
-const Banner = () => {
+const SubBanner = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editingProduct, setEditingProduct] = useState(null);
@@ -22,7 +22,7 @@ const Banner = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await Api.get('/banners');
+            const response = await Api.get('/subbanners');
             setProducts(response.data);
             console.log(response.data);
             
@@ -75,13 +75,13 @@ const Banner = () => {
 
         try {
             if (editingProduct) {
-                await Api.put(`/banners/${editingProduct._id}`, formDataToSend, {
+                await Api.put(`/subbanners/${editingProduct._id}`, formDataToSend, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 });
             } else {
-                await Api.post('/banners', formDataToSend, {
+                await Api.post('/subbanners', formDataToSend, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -111,7 +111,7 @@ const Banner = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this product?')) {
             try {
-                await Api.delete(`/banners/${id}`);
+                await Api.delete(`/subbanners/${id}`);
                 fetchProducts();
             } catch (error) {
                 console.error('Error deleting product:', error);
@@ -135,12 +135,12 @@ const Banner = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-8">Product Management</h1>
+            <h1 className="text-3xl font-bold mb-8">SubBanner Management</h1>
             
             {/* Product Form */}
             <div className="bg-white rounded-lg shadow-md p-6 mb-8">
                 <h2 className="text-xl font-semibold mb-4">
-                    {editingProduct ? 'Edit Product' : 'Add New Product'}
+                    {editingProduct ? 'Edit Product' : 'Add New SubBanner'}
                 </h2>
                 <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -247,12 +247,12 @@ const Banner = () => {
                         )}
                         <button
                             type="submit"
-                            className="px-4 py-2 bg-blue-600 text-black rounded-md text-sm 
+                            className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm 
                             font-medium hover:bg-blue-700 focus:outline-none focus:ring-2
                              focus:ring-blue-500"
                              onClick={handleSubmit}
                         >
-                            {editingProduct ? 'Update Product' : 'Add Product'}
+                            {editingProduct ? 'Update SubBanner' : 'Add SubBanner'}
                         </button>
                     </div>
                 </form>
@@ -260,11 +260,11 @@ const Banner = () => {
             
             {/* Products List */}
             <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-xl font-semibold mb-4">Products</h2>
+                <h2 className="text-xl font-semibold mb-4">SubBanner</h2>
                 {loading ? (
                     <p>Loading products...</p>
                 ) : products.length === 0 ? (
-                    <p>No products found. Add your first product.</p>
+                    <p>No SubBanner found. Add your first SubBanner.</p>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {products.map((product) => (
@@ -313,4 +313,4 @@ const Banner = () => {
     );
 };
 
-export default Banner;
+export default SubBanner;
