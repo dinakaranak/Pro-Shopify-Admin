@@ -18,6 +18,8 @@ import SupplierList from './pages/Suppliers/SupplierList';
 import AddSupplier from './pages/Suppliers/AddSupplier';
 import EditSupplier from './pages/Suppliers/EditSupplier';
 import ApproveSuppliers from './pages/Suppliers/ApproveSuppliers';
+import SubBanner from './components/SubBanner';
+
 
 function App() {
   const [themeMode, setThemeMode] = useState('light');
@@ -58,7 +60,9 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
+        <Topbar toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
         <div style={{ display: 'flex' }}>
+
           {/* Sidebar */}
           {sidebarOpen && (
             <div style={{ width: '240px', transition: 'width 0.3s ease' }}>
@@ -73,6 +77,7 @@ function App() {
               sidebarOpen={sidebarOpen}
             />
             <div style={{ padding: '20px', marginTop: '50px', marginLeft: sidebarOpen ? '15px' : '0', transition: 'margin-left 0.3s ease' }}>
+
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/users" element={<Users />} />
@@ -82,6 +87,7 @@ function App() {
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/banner" element={<Banner />} />
+
                 <Route path="/AdminUsers" element={<AdminUsersPage />} />
 
                 {/* Supplier Management Routes */}
@@ -91,6 +97,8 @@ function App() {
                   <Route path="edit-supplier/:id" element={<EditSupplier />} />
                   <Route path="approve-suppliers" element={<ApproveSuppliers />} />
                 </Route>
+
+                <Route path="/SubBanner" element={<SubBanner />} />
               </Routes>
             </div>
           </div>
