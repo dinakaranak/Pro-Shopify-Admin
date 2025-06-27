@@ -133,12 +133,12 @@ const Sidebar = ({ open, toggleSidebar }) => {
         </SidebarItem>
 
         <SidebarItem
-          title="Management"
+          title="Banners"
           icon={<FiImage />}
           toggleSidebar={toggleSidebar}
         >
           <SubItem to="/banner" toggleSidebar={toggleSidebar}>Manage Banners</SubItem>
-          <SubItem to="/uploads" toggleSidebar={toggleSidebar}>Image Uploads</SubItem>
+          <SubItem to="/SubBanner" toggleSidebar={toggleSidebar}>Sub BAnners</SubItem>
         </SidebarItem>
 
         <SidebarItem
