@@ -1,42 +1,72 @@
-// src/components/Topbar.jsx
-import React from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Badge, Avatar } from '@mui/material';
+import { Avatar, IconButton } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import {
-  Menu as MenuIcon,
-  Notifications as NotificationsIcon,
-  Brightness4 as Brightness4Icon,
-  Brightness7 as Brightness7Icon
-} from '@mui/icons-material';
+  FiMenu,
+  FiX,
+  FiBell,
+  FiLogOut,
+} from 'react-icons/fi';
 
-const Topbar = ({ toggleTheme, toggleSidebar, themeMode }) => {
+const Topbar = ({ toggleSidebar, themeMode, sidebarOpen }) => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Show full topbar content only if sidebar is closed or in mobile view
+  const shouldShowContent = isMobile || !sidebarOpen;
+
+  // Adjust width: full on mobile or when sidebar is closed; else subtract sidebar width
+  const topbarWidth = shouldShowContent ? 'w-full' : 'md:ml-64 w-full md:w-[calc(100%-256px)]';
+
   return (
-    <AppBar position="static" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-      <Toolbar>
-        <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="menu"
-          onClick={toggleSidebar}
-          sx={{ mr: 2 }}
-        >
-          <MenuIcon />
-        </IconButton>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Admin Panel
-        </Typography>
-        <IconButton color="inherit" onClick={toggleTheme}>
-          {themeMode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-        </IconButton>
-        <IconButton color="inherit">
-          <Badge badgeContent={4} color="secondary">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <IconButton color="inherit">
-          <Avatar alt="Admin User" src="/static/images/avatar/1.jpg" />
-        </IconButton>
-      </Toolbar>
-    </AppBar>
+    <div
+      className={`fixed top-0 left-0 h-16 z-40 bg-white border-b border-gray-200 shadow-sm transition-all ${topbarWidth}`}
+    >
+      <div className="flex items-center justify-between h-full px-4">
+        {/* Left: Menu or Close icon */}
+        <div className="flex items-center gap-3">
+          {shouldShowContent && (
+
+            <button
+              onClick={toggleSidebar}
+              className="text-gray-700 hover:text-black focus:outline-none text-xl"
+            >
+              {sidebarOpen ? <FiX /> : <FiMenu />}
+            </button>
+          )}
+
+          {/* Show title only when sidebar is closed or on mobile */}
+          {shouldShowContent && (
+            <h1 className="text-lg font-semibold text-gray-800 mt-2">Admin Panel</h1>
+          )}
+        </div>
+
+        {/* Right section: only show in mobile view or when sidebar is closed */}
+        <div className="flex items-center gap-4">
+
+          <button
+            onClick={() => {
+              // TODO: handle logout logic
+              console.log('Logged out');
+            }}
+            className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700 px-2 py-1 border-2 border-red-200 hover:border-red-400 rounded transition"
+          >
+            <FiLogOut className="text-lg" />
+            Logout
+          </button>
+          <IconButton color="inherit">
+            <Avatar alt="Admin User" src="/static/images/avatar/1.jpg" />
+          </IconButton>
+        </div>
+      </div>
+    </div>
   );
 };
 
