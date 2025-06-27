@@ -60,7 +60,6 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <Topbar toggleTheme={toggleTheme} toggleSidebar={toggleSidebar} />
         <div style={{ display: 'flex' }}>
 
           {/* Sidebar */}
