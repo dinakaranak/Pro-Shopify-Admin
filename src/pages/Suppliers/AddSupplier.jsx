@@ -19,10 +19,12 @@ const AddSupplier = () => {
 
   const roles = ['admin', 'supplier'];
   const permissionsOptions = [
-    'manage-products', 
-    'manage-orders', 
-    'manage-customers',
-    'analytics'
+    'Dashboard',
+    'Product Management',
+    'Banners',
+    'Admin Users',
+    'Supplier Management',
+    'Suplier',
   ];
 
   const validateForm = () => {
@@ -67,7 +69,7 @@ const AddSupplier = () => {
     setIsSubmitting(true);
     
     try {
-      await Api.post('/admin-users', formData);
+      await Api.post('/adminUsers', formData);
       toast.success('Supplier created successfully!');
       navigate('/suppliers');
     } catch (error) {
