@@ -6,9 +6,12 @@ import {
   FiBell,
   FiLogOut,
 } from 'react-icons/fi';
+import { logout } from '../utils/auth';
+import { useNavigate } from 'react-router-dom';
 
 const Topbar = ({ toggleSidebar, themeMode, sidebarOpen }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -53,8 +56,8 @@ const Topbar = ({ toggleSidebar, themeMode, sidebarOpen }) => {
 
           <button
             onClick={() => {
-              // TODO: handle logout logic
-              console.log('Logged out');
+              logout();                     // Clear token and user info
+              navigate('/admin/login');     // Redirect to login
             }}
             className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700 px-2 py-1 border-2 border-red-200 hover:border-red-400 rounded transition"
           >

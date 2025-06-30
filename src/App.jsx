@@ -1,8 +1,5 @@
-// src/App.js
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Topbar from './components/Topbar';
 import Dashboard from './pages/Dashboard';
@@ -19,34 +16,35 @@ import AddSupplier from './pages/Suppliers/AddSupplier';
 import EditSupplier from './pages/Suppliers/EditSupplier';
 import ApproveSuppliers from './pages/Suppliers/ApproveSuppliers';
 import SubBanner from './components/SubBanner';
+import AdminLogin from './components/AdminLogin';
+import { isLoggedIn, getAdminInfo } from './utils/auth';
+import ProtectedRoute from './components/ProtectedRoute';
+import NotFoundPage from './pages/404/NotFound';
+import PendingProductsPage from './pages/Suppliers/ApproveSuppliers';
+import SupplierProductForm from './pages/SupplierProduct/SupplierProductForm';
+import SupplierProductsPage from './pages/SupplierProduct/SupplierProductsPage';
+import ScrollToTop from './components/ScrollToTop';
+import SupplierProductList from './pages/Suppliers/SupplierProductlist';
 
-
-function App() {
-  const [themeMode, setThemeMode] = useState('light');
+function AppContent() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const location = useLocation();
+  const isLoginPage = location.pathname === '/admin/login';
+  const isAuthenticated = isLoggedIn();
+  const adminInfo = getAdminInfo();
 
-  const theme = createTheme({
-    palette: {
-      mode: themeMode,
-      primary: {
-        main: '#3f51b5',
-      },
-      secondary: {
-        main: '#f50057',
-      },
-    },
-  });
+  // Helper function to check permissions
+  const hasPermission = (requiredPermission) => {
+    if (!adminInfo) return false;
+    return adminInfo.role === 'admin' ||
+      adminInfo.permissions?.includes(requiredPermission);
+  };
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setSidebarOpen(false);
-      } else {
-        setSidebarOpen(true);
-      }
+      setSidebarOpen(window.innerWidth >= 768);
     };
 
-    // Initial check and event listener
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -57,53 +55,154 @@ function App() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <div style={{ display: 'flex' }}>
-
-          {/* Sidebar */}
-          {sidebarOpen && (
-            <div style={{ width: '240px', transition: 'width 0.3s ease' }}>
-              <Sidebar open={sidebarOpen} toggleSidebar={toggleSidebar} />
-            </div>
-          )}
-          {/* Main Content */}
-          <div className="flex-1 bg-gray-50">
-            <Topbar
-              toggleSidebar={toggleSidebar}
-              themeMode={themeMode}
-              sidebarOpen={sidebarOpen}
-            />
-            <div style={{ padding: '20px', marginTop: '50px', marginLeft: sidebarOpen ? '15px' : '0', transition: 'margin-left 0.3s ease' }}>
-
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/users" element={<Users />} />
-                <Route path="/add-product" element={<Products />} />
-                <Route path="/products" element={<ProductList />} />
-                  <Route path="/product/:id" element={<Products />} /> 
-                <Route path="/orders" element={<Orders />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/banner" element={<Banner />} />
-
-                <Route path="/AdminUsers" element={<AdminUsersPage />} />
-
-                {/* Supplier Management Routes */}
-                <Route path="/suppliers" >
-                  <Route index element={<SupplierList />} />
-                  <Route path="add-supplier" element={<AddSupplier />} />
-                  <Route path="edit-supplier/:id" element={<EditSupplier />} />
-                  <Route path="approve-suppliers" element={<ApproveSuppliers />} />
-                </Route>
-
-                <Route path="/SubBanner" element={<SubBanner />} />
-              </Routes>
-            </div>
-          </div>
+    <div style={{ display: 'flex' }}>
+      {/* Sidebar - Only show when authenticated and not on login page */}
+      <ScrollToTop />
+      {isAuthenticated && !isLoginPage && sidebarOpen && (
+        <div style={{ width: '240px', transition: 'width 0.3s ease' }}>
+          <Sidebar
+            open={sidebarOpen}
+            toggleSidebar={toggleSidebar}
+            hasPermission={hasPermission}
+          />
         </div>
-      </Router>
-    </ThemeProvider>
+      )}
+
+      {/* Main Content */}
+      <div className="flex-1 bg-gray-50">
+        {/* Topbar - Only show when authenticated and not on login page */}
+        {isAuthenticated && !isLoginPage && (
+          <Topbar
+            toggleSidebar={toggleSidebar}
+            sidebarOpen={sidebarOpen}
+          />
+        )}
+
+        <div style={{
+          padding: isAuthenticated && !isLoginPage ? '20px' : '0px',
+          marginTop: isAuthenticated && !isLoginPage ? '50px' : '0px',
+          marginLeft: (isAuthenticated && !isLoginPage && sidebarOpen) ? '15px' : '0px',
+          transition: 'margin-left 0.3s ease'
+        }}>
+          <Routes>
+            <Route path="/admin/login" element={<AdminLogin />} />
+
+            {/* Protected Routes */}
+            <Route path="/" element={
+              <ProtectedRoute requiredPermission="Dashboard">
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/users" element={
+              <ProtectedRoute requiredPermission="users">
+                <Users />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/add-product" element={
+              <ProtectedRoute requiredPermission="Product Management">
+                <Products />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/products" element={
+              <ProtectedRoute requiredPermission="Product Management">
+                <ProductList />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/product/:id" element={
+              <ProtectedRoute requiredPermission="Product Management">
+                <Products />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/orders" element={
+              <ProtectedRoute requiredPermission="orders">
+                <Orders />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/settings" element={
+              <ProtectedRoute requiredPermission="settings">
+                <Settings />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/banner" element={
+              <ProtectedRoute requiredPermission="Banners">
+                <Banner />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/AdminUsers" element={
+              <ProtectedRoute requiredPermission="Admin Users">
+                <AdminUsersPage />
+              </ProtectedRoute>
+            } />
+
+            {/* Supplier Management */}
+            <Route path="/suppliers" element={
+              <ProtectedRoute requiredPermission="suppliers">
+                <SupplierList />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/add-supplier" element={
+              <ProtectedRoute requiredPermission="suppliers">
+                <AddSupplier />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/edit-supplier/:id" element={
+              <ProtectedRoute requiredPermission="Supplier Management">
+                <EditSupplier />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/approve-suppliers" element={
+              <ProtectedRoute requiredPermission="Supplier Management">
+                <PendingProductsPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/SubBanner" element={
+              <ProtectedRoute requiredPermission="Banners">
+                <SubBanner />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/Add-SProduct" element={
+              <ProtectedRoute requiredPermission="Suplier">
+                <SupplierProductForm />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/SProduct" element={
+              <ProtectedRoute requiredPermission="Suplier">
+                <SupplierProductsPage />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/supplier-products/:supplierId" element={
+              <ProtectedRoute requiredPermission="Admin Users">
+                <SupplierProductList />
+              </ProtectedRoute>
+            } />
+
+            {/* Catch-all route */}
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <AppContent />
   );
 }
 

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
-  FiChevronDown, FiChevronRight, FiLogOut,
-  FiGrid, FiBox, FiTruck, FiImage,
-  FiUser, FiLock, FiX, FiMenu
+  FiChevronDown, FiChevronRight, FiGrid, FiBox,
+  FiTruck, FiImage, FiUser, FiX, FiMenu,
+  FiUsers
 } from 'react-icons/fi';
+import { getAdminInfo } from '../utils/auth';
 
 const SidebarItem = ({ title, icon, children, path, toggleSidebar }) => {
   const [open, setOpen] = useState(false);
@@ -21,8 +22,8 @@ const SidebarItem = ({ title, icon, children, path, toggleSidebar }) => {
           onClick={handleNavClick}
           className={({ isActive }) =>
             `no-underline flex items-center px-3 py-2 rounded-xl transition-all group ${isActive
-              ? 'bg-gradient-to-r from-purple-50 to-indigo-50 border-l-4 border-purple-500 text-purple-700 font-medium shadow-sm'
-              : 'hover:bg-purple-50/50 text-gray-700'
+              ? 'bg-gradient-to-r from-purple-50 to-indigo-50 border-l-4 border-purple-500 text-purple-700 shadow-sm'
+              : 'text-gray-700'
             }`
           }
         >
@@ -33,9 +34,7 @@ const SidebarItem = ({ title, icon, children, path, toggleSidebar }) => {
         </NavLink>
       ) : (
         <button
-          className={`flex justify-between items-center w-full px-3 py-2 rounded-xl text-left transition-all ${open
-              ? 'text-gray-900 bg-purple-50/50'
-              : 'text-gray-700 hover:bg-purple-50/30'
+          className={`flex justify-between items-center w-full px-3 py-2 rounded-xl text-left transition-all ${open ? 'text-gray-900' : 'text-gray-700'
             }`}
           onClick={() => setOpen(!open)}
         >
@@ -72,13 +71,13 @@ const SubItem = ({ to, children, toggleSidebar }) => {
       onClick={handleClick}
       className={({ isActive }) =>
         `no-underline flex items-center px-3 py-2 rounded-xl transition-all group ${isActive
-          ? 'bg-gradient-to-r from-purple-50 to-indigo-50 border-l-4 border-purple-500 text-purple-700 font-medium shadow-sm'
-          : 'hover:bg-purple-50/50 text-gray-700'
+          ? 'bg-gradient-to-r from-purple-50 to-indigo-50 border-l-4 border-purple-500 text-purple-700 shadow-sm'
+          : 'text-gray-700'
         }`
       }
     >
       <span className="flex items-center">
-        <span className=" rounded-full bg-purple-300 mr-3 group-hover:bg-purple-500 transition-colors"></span>
+        <span className="rounded-full bg-purple-300 w-2 h-2 mr-3"></span>
         {children}
       </span>
     </NavLink>
@@ -86,16 +85,128 @@ const SubItem = ({ to, children, toggleSidebar }) => {
 };
 
 const Sidebar = ({ open, toggleSidebar }) => {
+  const user = getAdminInfo();
+
+  const hasRole = (role) =>
+    user?.role === 'admin' || user?.permissions?.includes(role);
+
+  const sidebarItems = [
+    {
+      title: 'Dashboard',
+      icon: <FiGrid />,
+      path: '/',
+      visible: hasRole('Dashboard'),
+    },
+    {
+      title: 'Products',
+      icon: <FiBox />,
+      visible: hasRole('Product Management'),
+      subItems: [
+        {
+          title: 'Add Product',
+          path: '/add-product',
+          visible: true,
+        },
+        {
+          title: 'All Products',
+          path: '/products',
+          visible: true,
+        },
+      ],
+    },
+    {
+      title: 'Banners',
+      icon: <FiImage />,
+      visible: hasRole('Banners'),
+      subItems: [
+        {
+          title: 'Manage Banners',
+          path: '/banner',
+          visible: true,
+        },
+        {
+          title: 'Sub Banners',
+          path: '/SubBanner',
+          visible: true,
+        },
+      ],
+    },
+    {
+      title: 'Admin Users',
+      icon: <FiUser />,
+      visible: hasRole('Admin Users'),
+      subItems: [
+        {
+          title: 'Manage Admins',
+          path: '/AdminUsers',
+          visible: true,
+        },
+      ],
+    },
+    {
+      title: 'Suppliers',
+      icon: <FiTruck />,
+      visible: hasRole('Supplier Management'),
+      subItems: [
+        {
+          title: 'All Suppliers',
+          path: '/suppliers',
+          visible: true,
+        },
+        {
+          title: 'Add Supplier',
+          path: '/add-supplier',
+          visible: true,
+        },
+        {
+          title: 'Approve Applications',
+          path: '/approve-suppliers',
+          visible: true,
+        },
+      ],
+    },
+    {
+      title: 'Users',
+      icon: <FiUsers />,
+      visible: hasRole('User'),
+      subItems: [
+        {
+          title: 'All Users',
+          path: '/users',
+          visible: true,
+        },
+        // {
+        //   title: 'Product-S',
+        //   path: '/SProduct',
+        //   visible: true,
+        // },
+      ],
+    },
+    {
+      title: 'Products-S',
+      icon: <FiBox />,
+      visible: hasRole('Suplier'),
+      subItems: [
+        {
+          title: 'Add Product-S',
+          path: '/Add-SProduct',
+          visible: true,
+        },
+        {
+          title: 'Product-S',
+          path: '/SProduct',
+          visible: true,
+        },
+      ],
+    },
+  ];
+
   return (
     <div
-      className={`
-        fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-purple-100 shadow-lg
-        transform transition-transform duration-300 ease-in-out
-        ${open ? 'translate-x-0' : '-translate-x-full'}
-        md:relative md:translate-x-0 md:shadow-md
-      `}
+      className={`fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-purple-100 shadow-lg transform transition-transform duration-300 ease-in-out ${open ? 'translate-x-0' : '-translate-x-full'
+        } md:relative md:translate-x-0 md:shadow-md`}
     >
-      {/* Header with close button */}
+      {/* Header */}
       <div className="p-3 flex justify-between items-center border-b border-purple-100">
         <div className="flex items-center space-x-3">
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
@@ -108,7 +219,7 @@ const Sidebar = ({ open, toggleSidebar }) => {
 
         <button
           onClick={toggleSidebar}
-          className="md:hidden p-2 rounded-lg hover:bg-purple-100 text-purple-600"
+          className="md:hidden p-2 rounded-lg text-purple-600"
         >
           <FiX className="text-xl" />
         </button>
@@ -116,78 +227,32 @@ const Sidebar = ({ open, toggleSidebar }) => {
 
       {/* Navigation */}
       <nav className="p-4 space-y-1 overflow-y-auto custom-scrollbar">
-        <SidebarItem
-          title="Dashboard"
-          icon={<FiGrid />}
-          path="/"
-          toggleSidebar={toggleSidebar}
-        />
-
-        <SidebarItem
-          title="Products"
-          icon={<FiBox />}
-          toggleSidebar={toggleSidebar}
-        >
-          <SubItem to="/add-product" toggleSidebar={toggleSidebar}>Add Product</SubItem>
-          <SubItem to="/products" toggleSidebar={toggleSidebar}>All Products</SubItem>
-        </SidebarItem>
-
-        <SidebarItem
-          title="Banners"
-          icon={<FiImage />}
-          toggleSidebar={toggleSidebar}
-        >
-          <SubItem to="/banner" toggleSidebar={toggleSidebar}>Manage Banners</SubItem>
-          <SubItem to="/SubBanner" toggleSidebar={toggleSidebar}>Sub BAnners</SubItem>
-        </SidebarItem>
-
-        <SidebarItem
-          title="Admin"
-          icon={<FiUser />}
-          toggleSidebar={toggleSidebar}
-        >
-          <SubItem to="/AdminUsers" toggleSidebar={toggleSidebar}>Admin Users</SubItem>
-        </SidebarItem>
-
-        <SidebarItem
-          title="Suppliers"
-          icon={<FiTruck />}
-          toggleSidebar={toggleSidebar}
-        >
-          <SubItem to="/suppliers" toggleSidebar={toggleSidebar}>All Suppliers</SubItem>
-          <SubItem to="/suppliers/add-supplier" toggleSidebar={toggleSidebar}>Add Supplier</SubItem>
-          <SubItem to="/suppliers/approve-suppliers" toggleSidebar={toggleSidebar}>Approve Applications</SubItem>
-        </SidebarItem>
+        {sidebarItems.map(
+          (item, index) =>
+            item.visible && (
+              <SidebarItem
+                key={index}
+                title={item.title}
+                icon={item.icon}
+                path={item.path}
+                toggleSidebar={toggleSidebar}
+              >
+                {item.subItems?.map(
+                  (sub, subIndex) =>
+                    sub.visible && (
+                      <SubItem
+                        key={subIndex}
+                        to={sub.path}
+                        toggleSidebar={toggleSidebar}
+                      >
+                        {sub.title}
+                      </SubItem>
+                    )
+                )}
+              </SidebarItem>
+            )
+        )}
       </nav>
-
-      {/* Bottom user menu */}
-      {/* <div className="absolute bottom-0 left-0 right-0 border-t border-purple-100 p-4 bg-white">
-        <div className="space-y-1">
-          <NavLink
-            to="/profile"
-            className="flex items-center px-4 py-2.5 rounded-lg text-gray-700 hover:bg-purple-50/50 transition-colors"
-          >
-            <FiUser className="mr-3 text-lg text-purple-600" />
-            <span>Profile</span>
-          </NavLink>
-
-          <NavLink
-            to="/change-password"
-            className="flex items-center px-4 py-2.5 rounded-lg text-gray-700 hover:bg-purple-50/50 transition-colors"
-          >
-            <FiLock className="mr-3 text-lg text-purple-600" />
-            <span>Change Password</span>
-          </NavLink>
-
-          <NavLink
-            to="/logout"
-            className="flex items-center px-4 py-2.5 rounded-lg text-purple-700 hover:bg-purple-50/70 transition-colors"
-          >
-            <FiLogOut className="mr-3 text-lg text-purple-600" />
-            <span>Logout</span>
-          </NavLink>
-        </div>
-      </div> */}
     </div>
   );
 };

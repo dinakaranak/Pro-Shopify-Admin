@@ -13,7 +13,7 @@ const AdminUsersPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   // Form states
   const [newUser, setNewUser] = useState({
     name: '',
@@ -22,7 +22,7 @@ const AdminUsersPage = () => {
     role: 'supplier',
     permissions: []
   });
-  
+
   const [editUser, setEditUser] = useState({
     name: '',
     role: '',
@@ -31,24 +31,18 @@ const AdminUsersPage = () => {
 
   // Available permissions
   const availablePermissions = [
-    'manage-products',
-    'manage-orders',
-    'manage-users',
-    'view-reports'
+    'Dashboard',
+    'Product Management',
+    'Banners',
+    'Admin Users',
+    'Supplier Management',
+    'Suplier',
   ];
-
-  // Permission labels
-  const permissionLabels = {
-    'manage-products': 'Products',
-    'manage-orders': 'Orders',
-    'manage-users': 'Users',
-    'view-reports': 'Reports'
-  };
 
   // Filter users based on search term
   const filteredUsers = useMemo(() => {
     if (!searchTerm) return users;
-    return users.filter(user => 
+    return users.filter(user =>
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -66,7 +60,7 @@ const AdminUsersPage = () => {
         setLoading(false);
       }
     };
-    
+
     fetchUsers();
   }, []);
 
@@ -88,13 +82,13 @@ const AdminUsersPage = () => {
       const newPermissions = editUser.permissions.includes(permission)
         ? editUser.permissions.filter(p => p !== permission)
         : [...editUser.permissions, permission];
-      
+
       setEditUser({ ...editUser, permissions: newPermissions });
     } else {
       const newPermissions = newUser.permissions.includes(permission)
         ? newUser.permissions.filter(p => p !== permission)
         : [...newUser.permissions, permission];
-      
+
       setNewUser({ ...newUser, permissions: newPermissions });
     }
   };
@@ -128,7 +122,7 @@ const AdminUsersPage = () => {
   const handleToggleStatus = async () => {
     try {
       await Api.patch(`adminUsers/${selectedUser._id}/status`);
-      setUsers(users.map(u => 
+      setUsers(users.map(u =>
         u._id === selectedUser._id ? { ...u, isActive: !u.isActive } : u
       ));
       toast.success(`User ${selectedUser.isActive ? 'deactivated' : 'activated'}!`);
@@ -197,7 +191,7 @@ const AdminUsersPage = () => {
           <div className="h-10 bg-gray-200 rounded w-1/3 mb-4 md:mb-0 animate-pulse"></div>
           <div className="h-10 bg-gray-200 rounded w-48 animate-pulse"></div>
         </div>
-        
+
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -253,7 +247,7 @@ const AdminUsersPage = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
-      
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Manage Admin Users</h1>
@@ -341,11 +335,10 @@ const AdminUsersPage = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        user.role === 'admin' 
-                          ? 'bg-blue-100 text-blue-800' 
+                      <span className={`px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full ${user.role === 'admin'
+                          ? 'bg-blue-100 text-blue-800'
                           : 'bg-purple-100 text-purple-800'
-                      }`}>
+                        }`}>
                         {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                       </span>
                     </td>
@@ -353,11 +346,11 @@ const AdminUsersPage = () => {
                       <div className="flex flex-wrap gap-1 max-w-xs">
                         {user?.permissions.length > 0 ? (
                           user.permissions.map(p => (
-                            <span 
-                              key={p} 
+                            <span
+                              key={p}
                               className="bg-indigo-50 text-indigo-800 text-xs font-medium px-2.5 py-1 rounded-full"
                             >
-                              {permissionLabels[p] || p}
+                              {p}
                             </span>
                           ))
                         ) : (
@@ -367,12 +360,10 @@ const AdminUsersPage = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className={`h-2.5 w-2.5 rounded-full mr-2 ${
-                          user.isActive ? 'bg-green-500' : 'bg-gray-400'
-                        }`}></div>
-                        <span className={`text-sm font-medium ${
-                          user.isActive ? 'text-green-800' : 'text-gray-800'
-                        }`}>
+                        <div className={`h-2.5 w-2.5 rounded-full mr-2 ${user.isActive ? 'bg-green-500' : 'bg-gray-400'
+                          }`}></div>
+                        <span className={`text-sm font-medium ${user.isActive ? 'text-green-800' : 'text-gray-800'
+                          }`}>
                           {user.isActive ? 'Active' : 'Inactive'}
                         </span>
                       </div>
@@ -392,11 +383,10 @@ const AdminUsersPage = () => {
                         </button>
                         <button
                           onClick={() => openStatusModal(user)}
-                          className={`${
-                            user.isActive 
-                              ? 'text-yellow-600 hover:text-yellow-900' 
+                          className={`${user.isActive
+                              ? 'text-yellow-600 hover:text-yellow-900'
                               : 'text-green-600 hover:text-green-900'
-                          } flex items-center group`}
+                            } flex items-center group`}
                           title={user.isActive ? 'Deactivate user' : 'Activate user'}
                         >
                           <div className="p-1.5 rounded-lg group-hover:bg-yellow-50 transition-colors">
@@ -429,10 +419,10 @@ const AdminUsersPage = () => {
       {/* Create User Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-lg w-full max-w-md">
+          <div className="bg-white rounded-xl shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
               <h3 className="text-xl font-semibold text-gray-900">Create New User</h3>
-              <button 
+              <button
                 onClick={() => setShowCreateModal(false)}
                 className="text-gray-400 hover:text-gray-500"
               >
@@ -454,7 +444,7 @@ const AdminUsersPage = () => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                 <input
@@ -467,7 +457,7 @@ const AdminUsersPage = () => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
                 <input
@@ -480,7 +470,7 @@ const AdminUsersPage = () => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">Role</label>
                 <select
@@ -493,7 +483,7 @@ const AdminUsersPage = () => {
                   <option value="admin">Admin</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Permissions</label>
                 <div className="grid grid-cols-2 gap-3">
@@ -510,7 +500,7 @@ const AdminUsersPage = () => {
                       </div>
                       <div className="ml-3 text-sm">
                         <label htmlFor={`create-${permission}`} className="font-medium text-gray-700">
-                          {permissionLabels[permission] || permission}
+                          {permission}
                         </label>
                       </div>
                     </div>
@@ -539,10 +529,10 @@ const AdminUsersPage = () => {
       {/* Edit User Modal */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-lg w-full max-w-md">
+          <div className="bg-white rounded-xl shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
               <h3 className="text-xl font-semibold text-gray-900">Edit User</h3>
-              <button 
+              <button
                 onClick={() => setShowEditModal(false)}
                 className="text-gray-400 hover:text-gray-500"
               >
@@ -563,7 +553,7 @@ const AdminUsersPage = () => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">Role</label>
                 <select
@@ -576,7 +566,7 @@ const AdminUsersPage = () => {
                   <option value="admin">Admin</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Permissions</label>
                 <div className="grid grid-cols-2 gap-3">
@@ -593,7 +583,7 @@ const AdminUsersPage = () => {
                       </div>
                       <div className="ml-3 text-sm">
                         <label htmlFor={`edit-${permission}`} className="font-medium text-gray-700">
-                          {permissionLabels[permission] || permission}
+                          {permission}
                         </label>
                       </div>
                     </div>
@@ -629,22 +619,20 @@ const AdminUsersPage = () => {
             <div className="p-6">
               {selectedUser && (
                 <div className="flex flex-col items-center text-center">
-                  <div className={`p-3 rounded-full mb-4 ${
-                    selectedUser.isActive ? 'bg-yellow-100' : 'bg-green-100'
-                  }`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-8 w-8 ${
-                      selectedUser.isActive ? 'text-yellow-600' : 'text-green-600'
-                    }`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className={`p-3 rounded-full mb-4 ${selectedUser.isActive ? 'bg-yellow-100' : 'bg-green-100'
+                    }`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-8 w-8 ${selectedUser.isActive ? 'text-yellow-600' : 'text-green-600'
+                      }`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                   </div>
                   <p className="text-gray-700">
-                    Are you sure you want to {selectedUser.isActive ? 'deactivate' : 'activate'} 
+                    Are you sure you want to {selectedUser.isActive ? 'deactivate' : 'activate'}
                     the user <strong className="font-semibold">{selectedUser.name}</strong>?
                   </p>
                   <p className="text-gray-500 mt-2 text-sm">
-                    {selectedUser.isActive 
-                      ? "They will lose access to the admin dashboard." 
+                    {selectedUser.isActive
+                      ? "They will lose access to the admin dashboard."
                       : "They will regain access to the admin dashboard."}
                   </p>
                 </div>
@@ -659,11 +647,10 @@ const AdminUsersPage = () => {
               </button>
               <button
                 onClick={handleToggleStatus}
-                className={`px-4 py-2.5 text-sm font-medium text-white rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all ${
-                  selectedUser?.isActive
+                className={`px-4 py-2.5 text-sm font-medium text-white rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all ${selectedUser?.isActive
                     ? 'bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 focus:ring-yellow-500'
                     : 'bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 focus:ring-green-500'
-                }`}
+                  }`}
               >
                 {selectedUser?.isActive ? 'Deactivate User' : 'Activate User'}
               </button>
@@ -688,7 +675,7 @@ const AdminUsersPage = () => {
                     </svg>
                   </div>
                   <p className="text-gray-700">
-                    Are you sure you want to permanently delete the user 
+                    Are you sure you want to permanently delete the user
                     <strong className="font-semibold"> {selectedUser.name}</strong>?
                   </p>
                   <p className="text-red-600 mt-3 text-sm bg-red-50 py-2 px-4 rounded-lg">
