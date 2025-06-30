@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FiPlus } from 'react-icons/fi';
+import { FiBox, FiPlus } from 'react-icons/fi';
 
 import { toast } from 'react-toastify';
 import Api from '../../Services/Api';
@@ -19,8 +19,9 @@ const SupplierList = () => {
     try {
       setLoading(true);
       const response = await  Api.get('/adminUsers');
-      setSuppliers(response.data);
-    } catch (error) {
+    const onlySuppliers = response.data.filter(user => user.role === 'supplier');
+    setSuppliers(onlySuppliers);    
+  } catch (error) {
       toast.error('Failed to fetch suppliers');
     } finally {
       setLoading(false);
@@ -29,7 +30,7 @@ const SupplierList = () => {
 
   const handleToggleStatus = async (id) => {
     try {
-      await Api.patch(`/admin-users/${id}/status`);
+      await Api.patch(`/adminUsers/${id}/status`);
       toast.success('Status updated successfully');
       fetchSuppliers();
     } catch (error) {
@@ -40,7 +41,7 @@ const SupplierList = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this supplier?')) {
       try {
-        await Api.delete(`/admin-users/${id}`);
+        await Api.delete(`/adminUsers/${id}`);
         toast.success('Supplier deleted successfully');
         fetchSuppliers();
       } catch (error) {
@@ -68,7 +69,21 @@ const SupplierList = () => {
       key: 'createdAt', 
       title: 'Joined',
       render: (item) => new Date(item.createdAt).toLocaleDateString()
-    }
+    },
+      {
+    key: 'viewProducts',
+    title: 'Products',
+    render: (item) => (
+      <button
+        onClick={() => window.location.href = `/supplier-products/${item._id}`}
+        title="View Products"
+        className="text-blue-600 hover:text-blue-800 flex gap-2"
+      >
+        <FiBox className="text-lg" /> 
+        <p>View Products</p>
+      </button>
+    )
+  }
   ];
 
   if (loading) {

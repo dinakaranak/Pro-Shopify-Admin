@@ -833,8 +833,8 @@ const ProductList = () => {
                   <span className="text-gray-400 line-through text-sm">
                     ₹{product.originalPrice?.toFixed(2)}
                   </span>
-                  <span className="bg-red-100 text-red-600 px-2 py-1 text-xs rounded font-semibold">
-                    -{product.discountPercent}% OFF
+                  <span className="bg-green-100 text-green-600 px-2 py-1 text-xs rounded font-semibold">
+                    {product.discountPercent}% OFF
                   </span>
                 </>
               )}

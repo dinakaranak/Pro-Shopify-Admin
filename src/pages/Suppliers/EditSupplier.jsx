@@ -21,17 +21,19 @@ const EditSupplier = () => {
 
   const roles = ['admin', 'supplier'];
   const permissionsOptions = [
-    'manage-products', 
-    'manage-orders', 
-    'manage-customers',
-    'analytics'
+    'Dashboard',
+    'Product Management',
+    'Banners',
+    'Admin Users',
+    'Supplier Management',
+    'Suplier',
   ];
 
   useEffect(() => {
     const fetchSupplier = async () => {
       try {
         setLoading(true);
-        const response = await Api.get(`/admin-users/${id}`);
+        const response = await Api.get(`/adminUsers/${id}`);
         setFormData({
           name: response.data.name,
           email: response.data.email,
@@ -90,7 +92,7 @@ const EditSupplier = () => {
     setIsSubmitting(true);
     
     try {
-      await Api.patch(`/admin-users/${id}`, {
+      await Api.patch(`/adminUsers/${id}`, {
         name: formData.name,
         role: formData.role,
         permissions: formData.permissions
