@@ -5,7 +5,7 @@ import Topbar from './components/Topbar';
 import Dashboard from './pages/Dashboard';
 import Orders from './pages/Orders';
 import Settings from './pages/Settings';
-import Users from './pages/User';
+// import Users from './pages/User';
 import Products from './pages/Product/Products';
 import ProductList from './pages/Product/ProductList';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -25,6 +25,8 @@ import SupplierProductForm from './pages/SupplierProduct/SupplierProductForm';
 import SupplierProductsPage from './pages/SupplierProduct/SupplierProductsPage';
 import ScrollToTop from './components/ScrollToTop';
 import SupplierProductList from './pages/Suppliers/SupplierProductlist';
+import { ToastContainer } from 'react-toastify';
+import Users from './pages/Users/User';
 
 function AppContent() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -184,7 +186,7 @@ function AppContent() {
                 <SupplierProductsPage />
               </ProtectedRoute>
             } />
-            
+
             <Route path="/supplier-products/:supplierId" element={
               <ProtectedRoute requiredPermission="Admin Users">
                 <SupplierProductList />
@@ -202,7 +204,10 @@ function AppContent() {
 
 function App() {
   return (
-    <AppContent />
+    <>
+      <AppContent />
+      <ToastContainer position="top-right" autoClose={3000} />
+    </>
   );
 }
 

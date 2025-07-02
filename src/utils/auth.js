@@ -14,4 +14,5 @@ export const getAdminInfo = () => {
 export const logout = () => {
   localStorage.removeItem('adminToken');
   localStorage.removeItem('adminInfo');
+  localStorage.removeItem('token_expiry');
 };
