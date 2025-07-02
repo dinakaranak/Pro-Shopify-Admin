@@ -12,11 +12,14 @@ const AdminLogin = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       const res = await Api.post('adminUsers/login', { email, password });
       localStorage.setItem('adminToken', res.data.token);
       localStorage.setItem('adminInfo', JSON.stringify(res.data.user));
+      const expiry = Date.now() + 3600 * 1000;
+      console.log("Setting expiry to:", new Date(expiry).toLocaleString());
+      localStorage.setItem("token_expiry", expiry);
       navigate('/');
     } catch (err) {
       alert(err.response?.data?.message || 'Login failed');
@@ -31,7 +34,7 @@ const AdminLogin = () => {
         <div style={styles.header}>
           <h2 style={styles.title}>Admin Portal</h2>
         </div>
-        
+
         <form onSubmit={handleLogin} style={styles.form}>
           <div style={styles.inputGroup}>
             <label style={styles.label}>Email Address</label>
@@ -44,7 +47,7 @@ const AdminLogin = () => {
               required
             />
           </div>
-          
+
           <div style={styles.inputGroup}>
             <label style={styles.label}>Password</label>
             <input
@@ -56,9 +59,9 @@ const AdminLogin = () => {
               required
             />
           </div>
-          
-          <button 
-            type="submit" 
+
+          <button
+            type="submit"
             style={isLoading ? styles.disabledButton : styles.button}
             disabled={isLoading}
           >

@@ -344,7 +344,7 @@ const AdminUsersPage = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-1 max-w-xs">
-                        {user?.permissions.length > 0 ? (
+                        {user?.permissions?.length > 0 ? (
                           user.permissions.map(p => (
                             <span
                               key={p}
