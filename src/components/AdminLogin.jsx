@@ -17,7 +17,7 @@ const AdminLogin = () => {
       const res = await Api.post('adminUsers/login', { email, password });
       localStorage.setItem('adminToken', res.data.token);
       localStorage.setItem('adminInfo', JSON.stringify(res.data.user));
-      const expiry = Date.now() + 3600 * 1000;
+      const expiry = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
       console.log("Setting expiry to:", new Date(expiry).toLocaleString());
       localStorage.setItem("token_expiry", expiry);
       navigate('/');

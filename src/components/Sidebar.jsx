@@ -3,7 +3,8 @@ import { NavLink } from 'react-router-dom';
 import {
   FiChevronDown, FiChevronRight, FiGrid, FiBox,
   FiTruck, FiImage, FiUser, FiX, FiMenu,
-  FiUsers
+  FiUsers,
+  FiShoppingCart
 } from 'react-icons/fi';
 import { getAdminInfo } from '../utils/auth';
 
@@ -173,6 +174,23 @@ const Sidebar = ({ open, toggleSidebar }) => {
         {
           title: 'All Users',
           path: '/users',
+          visible: true,
+        },
+        // {
+        //   title: 'Product-S',
+        //   path: '/SProduct',
+        //   visible: true,
+        // },
+      ],
+    },
+        {
+      title: 'Orders',
+      icon: <FiShoppingCart />,
+      visible: hasRole('Orders'),
+      subItems: [
+        {
+          title: 'All orders',
+          path: '/orders',
           visible: true,
         },
         // {
