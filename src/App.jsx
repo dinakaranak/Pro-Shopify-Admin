@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import Sidebar from './components/Sidebar';
 import Topbar from './components/Topbar';
 import Dashboard from './pages/Dashboard';
-import Orders from './pages/Orders';
 import Settings from './pages/Settings';
 // import Users from './pages/User';
 import Products from './pages/Product/Products';
@@ -27,6 +26,7 @@ import ScrollToTop from './components/ScrollToTop';
 import SupplierProductList from './pages/Suppliers/SupplierProductlist';
 import { ToastContainer } from 'react-toastify';
 import Users from './pages/Users/User';
+import Orders from './pages/orders/Orders';
 
 function AppContent() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
