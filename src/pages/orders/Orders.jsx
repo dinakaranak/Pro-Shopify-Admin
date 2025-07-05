@@ -4,14 +4,16 @@ import {
   TableHead, TablePagination, TableRow, TableSortLabel,
   Select, MenuItem, FormControl, InputLabel, Chip,
   IconButton, Tooltip, Typography, Box,
-  LinearProgress, Snackbar, Alert, Avatar, Badge
+  LinearProgress, Snackbar, Alert, Avatar, Badge,Button
 } from '@mui/material';
 import {
   CheckCircle, Cancel, LocalShipping,
   Refresh, FilterList, MoreVert, Edit,
   HourglassEmpty, Payment, LocationOn, ArrowUpward, ArrowDownward,
   ArrowBackIosNew,
-  ArrowForwardIos
+  ArrowForwardIos,
+  FileUploadOff,
+  Download
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import dayjs from 'dayjs';
@@ -203,6 +205,33 @@ const Orders = () => {
   const getSortIcon = (field) => {
     if (sortField !== field) return null;
     return sortDirection === 'asc' ? <ArrowUpward fontSize="small" /> : <ArrowDownward fontSize="small" />;
+  };
+
+  const downloadInvoice = async (id) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await Api.get(`/orders/${id}/invoice`, {
+        responseType: 'blob',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Create download link
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `invoice-${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Invoice download failed:', error);
+      alert('Failed to download invoice. Please try again.');
+    }
   };
 
   return (
@@ -415,6 +444,8 @@ const Orders = () => {
                     </TableCell>
                     <TableCell sx={{ color: 'common.white' }}>Status</TableCell>
                     <TableCell align="center" sx={{ color: 'common.white' }}>Actions</TableCell>
+                   <TableCell align="center" sx={{ color: 'common.white' }}>Invoice</TableCell>
+
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -542,7 +573,33 @@ const Orders = () => {
                               <MenuItem value="cancelled">Cancelled</MenuItem>
                             </Select>
                           </FormControl>
-                        </TableCell>
+                           </TableCell>
+                           <TableCell>
+                          {/* Download Invoice Button */}
+                          <Button
+                            variant="contained"
+                            onClick={() => downloadInvoice(order._id)}
+                            startIcon={<Download fontSize="small" />}
+                            sx={{
+                              background: `linear-gradient(135deg, ${purpleTheme.primary} 0%, ${purpleTheme.primaryDark} 100%)`,
+                              color: '#fff',
+                              borderRadius: '8px',
+                              fontWeight: 600,
+                              px: 2.5,
+                              py: 1,
+                              textTransform: 'none',
+                              boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                              transition: 'all 0.3s ease',
+                              '&:hover': {
+                                transform: 'translateY(-2px)',
+                                boxShadow: '0 6px 8px rgba(0,0,0,0.15)',
+                                background: `linear-gradient(135deg, ${purpleTheme.primaryDark} 0%, ${purpleTheme.primary} 100%)`,
+                              }
+                            }}
+                          >
+                            Invoice
+                          </Button>
+                       </TableCell>
                       </StyledTableRow>
                     ))
                   ) : (
