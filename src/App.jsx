@@ -27,6 +27,7 @@ import SupplierProductList from './pages/Suppliers/SupplierProductlist';
 import { ToastContainer } from 'react-toastify';
 import Users from './pages/Users/User';
 import Orders from './pages/orders/Orders';
+import Offer from './components/Offer';
 
 function AppContent() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -172,6 +173,11 @@ function AppContent() {
             <Route path="/SubBanner" element={
               <ProtectedRoute requiredPermission="Banners">
                 <SubBanner />
+              </ProtectedRoute>
+            } />
+            <Route path="/offer" element={
+              <ProtectedRoute requiredPermission="Banners">
+                <Offer />
               </ProtectedRoute>
             } />
 
