@@ -121,13 +121,18 @@ const Sidebar = ({ open, toggleSidebar }) => {
       visible: hasRole('Banners'),
       subItems: [
         {
-          title: 'Manage Banners',
+          title: 'Add Banners',
           path: '/banner',
           visible: true,
         },
         {
           title: 'Sub Banners',
           path: '/SubBanner',
+          visible: true,
+        },
+        {
+          title: 'Offer Banners',
+          path: '/offer',
           visible: true,
         },
       ],
